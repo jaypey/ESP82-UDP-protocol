@@ -1,18 +1,18 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
-const char* ssid = "*****";
-const char* password = "******";
+const char* ssid = "******";
+const char* password = "*******";
 
 WiFiUDP Udp;
-unsigned int localUdpPort = 4210;  // local port to listen on
-char incomingPacket[255];  // buffer for incoming packets
-char  replyPacekt[] = "Hi there! Got the message :-)";  // a reply string to send back
+unsigned int localUdpPort = 4210;  // local port
+char incomingPacket[255];  // the buffer for the incoming packets
+char  replyPacekt[] = " Message received";  // reply from the ESP
 
 
 void setup()
 {
-  pinMode(D1, OUTPUT);
+  pinMode(D1, OUTPUT); // Setup the pin
   Serial.begin(115200);
   Serial.println();
 
@@ -43,20 +43,23 @@ void loop()
       incomingPacket[len] = 0;
     }
     Serial.printf("UDP packet contents: %s\n", incomingPacket);
-    if (strcmp(incomingPacket, "On") == 0)
+    if (strcmp(incomingPacket, "On") == 0)  //Pin turning On
     {
+      Udp.write("On!");
       Serial.printf("On!");
       digitalWrite(D1, HIGH);
       delay(1000);
     }
-    else if(strcmp(incomingPacket, "Off")== 0)
+    else if(strcmp(incomingPacket, "Off")== 0) //Pin off
     {
+      Udp.write("Off!");
       Serial.printf("Off!");
       digitalWrite(D1, LOW);
     }
-    else
+    else    //Asking the sender what is goin' on
     {
      Serial.printf("On or Off?");
+     Udp.write("On or off?");
     }
 
     // send back a reply, to the IP address and port we got the packet from
